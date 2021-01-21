@@ -1,25 +1,53 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css";
+import Header from "./components/Header";
+import UsersView from "./components/UsersView";
+import API from "./utils/API";
+import FormInput from "./components/FormInput";
+import "bootstrap/dist/css/bootstrap.min.css";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+class App extends React.Component {
+  state = {
+    allUsers: [],
+    filteredUsers: [""],
+    firstName: "",
+    lastName: "",
+    gender: "",
+    location: "",
+  };
+
+  //call API call,setState
+
+  componentDidMount() {
+    API.getUsers().then((employees) => {
+      this.setState({ allUsers: employees.data.results });
+    });
+  }
+
+  handleInputChange = (e) => {
+    let value = e.target.value;
+    const name = e.target.name;
+
+    this.setState({ [name]: value });
+    console.log(value);
+  };
+
+  
+  render() {
+      return (
+        <div className="App">
+          <Header />
+          <FormInput
+            handleInputChange={this.handleInputChange}
+            firstName={this.state.firstName}
+            lastName={this.state.lastName}
+            filteredUsers={this.state.filteredUsers}
+          />
+          <UsersView employees={this.state.allUsers} />
+        </div>
+      );
+    }
 }
 
 export default App;
